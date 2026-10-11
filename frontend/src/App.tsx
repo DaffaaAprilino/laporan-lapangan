@@ -37,10 +37,32 @@ function App() {
     }
   };
 
+  // Final decision: once approved/rejected, lock both actions
+  const isDecided = (r: Report) => r.status !== "pending";
+
   return (
     <main className="container">
       <h1>Field Reports Dashboard</h1>
       <p className="subtitle">MAPID Study Case — Fullstack Developer</p>
+
+      <div className="stats">
+        <div className="stat total">
+          <div className="label">Total</div>
+          <div className="value">{reports.length}</div>
+        </div>
+        <div className="stat s-pending">
+          <div className="label">Pending</div>
+          <div className="value">{reports.filter((r) => r.status === "pending").length}</div>
+        </div>
+        <div className="stat s-approved">
+          <div className="label">Approved</div>
+          <div className="value">{reports.filter((r) => r.status === "approved").length}</div>
+        </div>
+        <div className="stat s-rejected">
+          <div className="label">Rejected</div>
+          <div className="value">{reports.filter((r) => r.status === "rejected").length}</div>
+        </div>
+      </div>
 
       <form className="form" onSubmit={handleCreate}>
         <h2>Tambah Laporan</h2>
@@ -61,7 +83,8 @@ function App() {
 
       {error && <p className="error">{error}</p>}
 
-      <h2>Daftar Laporan</h2>
+      <h2 className="section">Daftar Laporan</h2>
+      <div className="table-wrap">
       <table>
         <thead>
           <tr>
@@ -74,16 +97,24 @@ function App() {
         <tbody>
           {reports.map((r) => (
             <tr key={r.id}>
-              <td>{r.name}</td>
+              <td className="name">{r.name}</td>
               <td>{r.description}</td>
               <td>
                 <span className={`badge badge-${r.status}`}>{r.status}</span>
               </td>
               <td>
-                <button className="btn-approve" onClick={() => handleStatus(r.id, "approved")}>
+                <button
+                  className="btn-approve"
+                  disabled={isDecided(r)}
+                  onClick={() => handleStatus(r.id, "approved")}
+                >
                   Approve
                 </button>
-                <button className="btn-reject" onClick={() => handleStatus(r.id, "rejected")}>
+                <button
+                  className="btn-reject"
+                  disabled={isDecided(r)}
+                  onClick={() => handleStatus(r.id, "rejected")}
+                >
                   Reject
                 </button>
               </td>
@@ -98,6 +129,7 @@ function App() {
           )}
         </tbody>
       </table>
+      </div>
     </main>
   );
 }
