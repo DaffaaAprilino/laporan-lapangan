@@ -1,0 +1,142 @@
+:root {
+  font-family: system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: #f5f6f8;
+  color: #1a1d21;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+h1 {
+  margin-bottom: 0;
+}
+
+.subtitle {
+  color: #667085;
+  margin-top: 0.25rem;
+}
+
+.form {
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.form input,
+.form textarea {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form button {
+  align-self: flex-start;
+  background: #175cd3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e4e7ec;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #eef0f4;
+}
+
+th {
+  background: #f9fafb;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #667085;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: #fef0c7;
+  color: #b54708;
+}
+
+.badge-approved {
+  background: #d1fadf;
+  color: #067647;
+}
+
+.badge-rejected {
+  background: #fee4e2;
+  color: #b42318;
+}
+
+.btn-approve,
+.btn-reject {
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 0.4rem;
+}
+
+.btn-approve {
+  background: #12b76a;
+  color: #fff;
+}
+
+.btn-reject {
+  background: #f04438;
+  color: #fff;
+}
+
+.error {
+  color: #b42318;
+  background: #fee4e2;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+}
+
+.empty {
+  text-align: center;
+  color: #98a2b3;
+}
