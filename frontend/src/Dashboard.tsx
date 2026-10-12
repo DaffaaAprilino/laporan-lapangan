@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Report, Status, User } from "./api";
 import { ApiError, createReport, fetchReports, updateReport, updateStatus } from "./api";
-import { IconDocument, IconLogout, IconUsers } from "./icons";
+import { IconDocument, IconList, IconLogout, IconUsers } from "./icons";
 import Users from "./Users";
 
 const formatDate = (iso: string) =>
@@ -17,7 +17,6 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
     null
   );
   const [view, setView] = useState<"laporan" | "pengguna">("laporan");
-  const [usersCount, setUsersCount] = useState(0);
 
   const isReporter = user.role === "reporter";
   const isApprover = user.role === "approver";
@@ -75,13 +74,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
   const counts: Record<Status, number> = { pending: 0, approved: 0, rejected: 0 };
   for (const r of reports) counts[r.status] += 1;
 
-  const reporters = new Set(reports.map((r) => r.created_by)).size;
   const reportsTitle = isReporter ? "Laporan Saya" : "Laporan";
-
-  // Ringkasan di bawah judul: cakupan data + yang perlu ditindak, bukan
-  // pengulangan judul halaman atau angka yang sudah ada di kartu KPI.
-  const scope = isReporter ? "Milik Anda" : `Dari ${reporters} pelapor`;
-  const summary = `${scope} · ${counts.pending} menunggu keputusan`;
 
   return (
     <div className="app">
@@ -98,9 +91,11 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
             type="button"
             className={`nav-item ${view === "laporan" ? "active" : ""}`}
             aria-current={view === "laporan" ? "page" : undefined}
+            aria-label={reportsTitle}
+            title={reportsTitle}
             onClick={() => setView("laporan")}
           >
-            <IconDocument />
+            <IconList />
             <span className="nav-label">{reportsTitle}</span>
             <span className="nav-count">{reports.length}</span>
           </button>
@@ -109,6 +104,8 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
               type="button"
               className={`nav-item ${view === "pengguna" ? "active" : ""}`}
               aria-current={view === "pengguna" ? "page" : undefined}
+              aria-label="Pengguna"
+              title="Pengguna"
               onClick={() => setView("pengguna")}
             >
               <IconUsers />
@@ -146,13 +143,10 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
       <main className="content">
         <header className="page-head">
           <h1>{view === "pengguna" ? "Kelola Pengguna" : reportsTitle}</h1>
-          <p className="page-sub">
-            {view === "pengguna" ? `${usersCount} akun terdaftar` : summary}
-          </p>
         </header>
 
         {view === "pengguna" ? (
-          <Users currentUserId={user.id} onCount={setUsersCount} onDeleted={load} />
+          <Users currentUserId={user.id} onDeleted={load} />
         ) : (
           <>
             <div className="stats">

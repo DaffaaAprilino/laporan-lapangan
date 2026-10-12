@@ -8,15 +8,7 @@ const ROLES: Role[] = ["reporter", "approver", "admin"];
 const formatDate = (iso?: string) =>
   iso ? new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" }) : "—";
 
-function Users({
-  currentUserId,
-  onCount,
-  onDeleted,
-}: {
-  currentUserId: number;
-  onCount: (n: number) => void;
-  onDeleted: () => void;
-}) {
+function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted: () => void }) {
   const [users, setUsers] = useState<User[]>([]);
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "reporter" as Role });
   const [error, setError] = useState("");
@@ -32,10 +24,6 @@ function Users({
   };
 
   useEffect(load, []);
-
-  useEffect(() => {
-    onCount(users.length);
-  }, [users.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -213,12 +213,6 @@ body {
   margin: 0;
 }
 
-.page-sub {
-  margin: 0.3rem 0 0;
-  font-size: 0.87rem;
-  color: var(--muted);
-}
-
 .role {
   display: inline-block;
   padding: 0.15rem 0.55rem;
@@ -841,9 +835,9 @@ textarea.inline {
     position: static;
     height: auto;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* satu baris; label menu disembunyikan di layar sangat sempit */
     align-items: center;
-    gap: 0.5rem 0.75rem;
+    gap: 0.75rem;
     padding: 0.6rem 1rem;
     border-right: 0;
     border-bottom: 1px solid var(--border);
@@ -851,12 +845,18 @@ textarea.inline {
 
   .nav {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 0.25rem;
+    min-width: 0;
   }
 
   .nav-item {
     min-height: 44px; /* sasaran sentuh nyaman di tablet/HP */
+  }
+
+  /* Nama aplikasi disembunyikan: ikon menu sudah cukup di bilah atas. */
+  .side-brand-text {
+    display: none;
   }
 
   .side-user {
@@ -883,10 +883,6 @@ textarea.inline {
 @media (max-width: 700px) {
   .container {
     padding: 1.5rem 1rem 3rem;
-  }
-
-  .side-brand-text {
-    display: none;
   }
 
   .page-head h1 {
@@ -1000,6 +996,19 @@ textarea.inline {
   .modal-actions button {
     flex: 1;
     min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Sangat sempit: menu jadi ikon saja agar bilah tetap satu baris. Angka
+     ringkasan sudah ada di kartu KPI, dan tiap ikon punya aria-label + title. */
+  .nav-label,
+  .nav-count {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 0.5rem 0.7rem;
   }
 }
 

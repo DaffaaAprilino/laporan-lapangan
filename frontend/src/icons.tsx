@@ -21,6 +21,17 @@ export function IconDocument({ size = 17 }: IconProps) {
   );
 }
 
+export function IconList({ size = 17 }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <g {...stroke}>
+        <path d="M9 6h11M9 12h11M9 18h11" />
+        <path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01" strokeWidth={2.4} />
+      </g>
+    </svg>
+  );
+}
+
 export function IconUsers({ size = 17 }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
