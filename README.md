@@ -81,13 +81,15 @@ npm run dev                   # http://localhost:5173
 
 ## Akun Demo
 
-Dibuat oleh `npm run db:seed` (password sama untuk semuanya: `password123`).
+Semua akun dibuat oleh `npm run db:seed`. **Password ketiganya sama: `password123`** — pakai ini untuk login di dashboard.
 
-| Email | Role | Bisa apa |
-| --- | --- | --- |
-| `admin@laporan.test` | admin | Membuat akun, melihat semua laporan |
-| `approver@laporan.test` | approver | Approve/reject semua laporan |
-| `pelapor@laporan.test` | reporter | Membuat & mengedit laporan miliknya |
+| Email | Password | Role | Bisa apa |
+| --- | --- | --- | --- |
+| `admin@laporan.test` | `password123` | admin | Membuat akun, melihat semua laporan |
+| `approver@laporan.test` | `password123` | approver | Approve/reject semua laporan |
+| `pelapor@laporan.test` | `password123` | reporter | Membuat & mengedit laporan miliknya |
+
+Alur uji cepat: login sebagai **pelapor** → tambah laporan → keluar → login sebagai **approver** → Approve/Reject → kolom Status menampilkan siapa yang memutuskan dan kapan.
 
 > Akun ini hanya untuk penilaian/demo. Ganti password dan `JWT_SECRET` bila dipakai sungguhan.
 

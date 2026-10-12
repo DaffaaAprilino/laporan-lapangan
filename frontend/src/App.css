@@ -217,72 +217,14 @@ body {
   font-size: 0.83rem;
 }
 
-/* Pintasan akun demo — hanya memudahkan penilaian. */
-.demo {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
+/* Catatan kecil di bawah kartu login. */
+.login-note {
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
   border-top: 1px dashed var(--border);
-}
-
-.demo-title {
-  margin: 0 0 0.6rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 0.78rem;
   color: var(--muted);
-}
-
-.demo-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.demo-chip {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.45rem 0.65rem;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: #f8fafc;
-  font: inherit;
-  font-size: 0.8rem;
-  text-align: left;
-  color: var(--text);
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.demo-chip:hover {
-  background: #eff6ff;
-  border-color: var(--secondary);
-}
-
-.demo-role {
-  flex: 0 0 5.2rem;
-  font-weight: 600;
-  color: var(--heading);
-}
-
-.demo-email {
-  color: var(--muted);
-  overflow-wrap: anywhere;
-}
-
-.demo-note {
-  margin: 0.7rem 0 0;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-
-.demo-note code {
-  font-size: 0.75rem;
-  background: #e2e8f0;
-  border-radius: 4px;
-  padding: 0.05rem 0.3rem;
+  text-align: center;
 }
 
 .loading {
@@ -654,7 +596,6 @@ textarea.inline {
 .btn-save:focus-visible,
 .btn-edit:focus-visible,
 .btn-primary:focus-visible,
-.demo-chip:focus-visible,
 .btn-ghost:focus-visible,
 .form button:focus-visible {
   outline: 2px solid var(--secondary);

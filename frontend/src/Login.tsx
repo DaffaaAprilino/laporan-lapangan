@@ -2,15 +2,6 @@ import { useState } from "react";
 import type { User } from "./api";
 import { ApiError, login } from "./api";
 
-// Akun demo dari `npm run db:seed` — memudahkan penilai mencoba tiap role.
-const DEMO = [
-  { role: "Pelapor", email: "pelapor@laporan.test" },
-  { role: "Approver", email: "approver@laporan.test" },
-  { role: "Admin", email: "admin@laporan.test" },
-];
-
-const DEMO_PASSWORD = "password123";
-
 function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,12 +20,6 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
     } finally {
       setBusy(false);
     }
-  };
-
-  const useDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword(DEMO_PASSWORD);
-    setError("");
   };
 
   return (
@@ -126,25 +111,9 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
           </button>
         </form>
 
-        <div className="demo">
-          <p className="demo-title">Akun demo</p>
-          <div className="demo-list">
-            {DEMO.map((account) => (
-              <button
-                key={account.email}
-                type="button"
-                className="demo-chip"
-                onClick={() => useDemo(account.email)}
-              >
-                <span className="demo-role">{account.role}</span>
-                <span className="demo-email">{account.email}</span>
-              </button>
-            ))}
-          </div>
-          <p className="demo-note">
-            Klik untuk mengisi otomatis. Password semuanya <code>{DEMO_PASSWORD}</code>.
-          </p>
-        </div>
+        <p className="login-note">
+          Akun demo untuk mencoba tiap role tercantum di README repositori.
+        </p>
       </section>
     </main>
   );
