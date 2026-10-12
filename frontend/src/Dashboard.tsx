@@ -39,8 +39,9 @@ function IconLogout() {
   return (
     <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
       <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3v8" />
-        <path d="M6.4 6.4a8 8 0 1 0 11.2 0" />
+        <path d="M14 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4" />
+        <path d="M10 8.5 6.5 12l3.5 3.5" />
+        <path d="M6.5 12H15" />
       </g>
     </svg>
   );
