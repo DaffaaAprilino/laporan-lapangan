@@ -98,7 +98,19 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
                 title={showPassword ? "Sembunyikan password" : "Tampilkan password"}
                 onClick={() => setShowPassword((v) => !v)}
               >
-                {showPassword ? "Sembunyikan" : "Lihat"}
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                  <g
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" />
+                    <circle cx="12" cy="12" r="3.2" />
+                    {showPassword && <path d="M4 20 20 4" />}
+                  </g>
+                </svg>
               </button>
             </span>
           </label>
