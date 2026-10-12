@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Report, Status, User } from "./api";
 import { ApiError, createReport, fetchReports, updateReport, updateStatus } from "./api";
+import { IconDocument, IconLogout, IconUsers } from "./icons";
 import Users from "./Users";
 
 const formatDate = (iso: string) =>
@@ -11,41 +12,6 @@ const ROLE_LABEL: Record<User["role"], string> = {
   reporter: "Pelapor",
   approver: "Approver",
 };
-
-function IconReports() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-      <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
-        <path d="M13.5 3v4.5H18M8 13h7M8 16.5h5" />
-      </g>
-    </svg>
-  );
-}
-
-function IconUsers() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-      <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="9.5" cy="8.5" r="3.2" />
-        <path d="M3.5 19.5c0-3 2.7-4.8 6-4.8s6 1.8 6 4.8" />
-        <path d="M16 5.6a3 3 0 0 1 0 5.8M17.5 14.9c1.9.6 3 1.9 3 4.1" />
-      </g>
-    </svg>
-  );
-}
-
-function IconLogout() {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-      <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M10 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h5" />
-        <path d="M9 12h10" />
-        <path d="M15.5 8.5 19 12l-3.5 3.5" />
-      </g>
-    </svg>
-  );
-}
 
 function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [reports, setReports] = useState<Report[]>([]);
@@ -121,12 +87,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
       <aside className="sidebar">
         <div className="side-brand">
           <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
-                <path d="M13.5 3v4.5H18M8 13h7M8 16.5h5" />
-              </g>
-            </svg>
+            <IconDocument size={20} />
           </span>
           <span className="side-brand-text">Laporan Lapangan</span>
         </div>
@@ -138,7 +99,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
             aria-current={view === "laporan" ? "page" : undefined}
             onClick={() => setView("laporan")}
           >
-            <IconReports />
+            <IconDocument />
             {reportsTitle}
             <span className="nav-count">{reports.length}</span>
           </button>

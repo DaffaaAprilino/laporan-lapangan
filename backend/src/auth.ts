@@ -2,7 +2,13 @@ import { randomBytes, scrypt as scryptCb, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import jwt from "jsonwebtoken";
 
-const scrypt = promisify(scryptCb);
+// promisify kehilangan overload scrypt, jadi tanda tangannya ditulis ulang di sini
+// agar hasilnya langsung Buffer tanpa cast di setiap pemakaian.
+const scrypt = promisify(scryptCb) as (
+  password: string,
+  salt: string,
+  keylen: number
+) => Promise<Buffer>;
 
 export type Role = "admin" | "reporter" | "approver";
 
@@ -23,6 +29,8 @@ declare global {
 }
 
 export const COOKIE_NAME = "token";
+
+// Satu-satunya sumber durasi sesi: dipakai cookie (maxAge) dan token JWT (expiresIn).
 export const SESSION_MS = 8 * 60 * 60 * 1000; // 8 jam
 
 const secret = process.env.JWT_SECRET ?? "";
@@ -33,7 +41,7 @@ if (!secret) {
 // Password disimpan sebagai "salt:hash" memakai scrypt bawaan Node (tanpa dependency tambahan).
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16).toString("hex");
-  const hash = (await scrypt(password, salt, 64)) as Buffer;
+  const hash = await scrypt(password, salt, 64);
   return `${salt}:${hash.toString("hex")}`;
 }
 
@@ -41,11 +49,12 @@ export async function verifyPassword(password: string, stored: string): Promise<
   const [salt, hash] = stored.split(":");
   if (!salt || !hash) return false;
   const expected = Buffer.from(hash, "hex");
-  const candidate = (await scrypt(password, salt, 64)) as Buffer;
+  const candidate = await scrypt(password, salt, 64);
   return candidate.length === expected.length && timingSafeEqual(candidate, expected);
 }
 
-export const signToken = (userId: number) => jwt.sign({ sub: userId }, secret, { expiresIn: "8h" });
+export const signToken = (userId: number) =>
+  jwt.sign({ sub: userId }, secret, { expiresIn: SESSION_MS / 1000 });
 
 export function readToken(token: string): number | null {
   try {

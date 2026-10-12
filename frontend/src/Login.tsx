@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { User } from "./api";
 import { ApiError, login } from "./api";
+import { IconDocument } from "./icons";
 
 function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
   const [email, setEmail] = useState("");
@@ -27,23 +28,7 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
       <section className="login-card">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="22" height="22">
-              <path
-                d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinejoin="round"
-              />
-              <path d="M13.5 3v4.5H18" fill="none" stroke="currentColor" strokeWidth="1.7" />
-              <path
-                d="M8 12.5h7M8 16h5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-              />
-            </svg>
+            <IconDocument size={22} />
           </span>
           <div>
             <h1>Dashboard Laporan Lapangan</h1>
