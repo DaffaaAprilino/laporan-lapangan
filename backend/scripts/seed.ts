@@ -6,9 +6,9 @@ import { pool } from "../src/db";
 const PASSWORD = "password123";
 
 const ACCOUNTS = [
-  { name: "Admin MAPID", email: "admin@mapid.test", role: "admin" },
-  { name: "Approver MAPID", email: "approver@mapid.test", role: "approver" },
-  { name: "Pelapor Lapangan", email: "pelapor@mapid.test", role: "reporter" },
+  { name: "Admin", email: "admin@laporan.test", role: "admin" },
+  { name: "Approver", email: "approver@laporan.test", role: "approver" },
+  { name: "Pelapor Lapangan", email: "pelapor@laporan.test", role: "reporter" },
 ] as const;
 
 const SAMPLES = [
@@ -38,7 +38,7 @@ async function main() {
 
   const { rows } = await pool.query<{ id: number }>(
     "SELECT id FROM users WHERE email = $1",
-    ["pelapor@mapid.test"]
+    ["pelapor@laporan.test"]
   );
   const reporterId = rows[0].id;
 

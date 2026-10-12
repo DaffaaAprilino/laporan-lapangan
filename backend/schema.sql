@@ -1,4 +1,4 @@
--- Skema database: MAPID Study Case — Dashboard Laporan Lapangan
+-- Skema database: Dashboard Laporan Lapangan
 -- Jalankan di PostgreSQL/Neon:  psql "$DATABASE_URL" -f schema.sql
 
 DROP TABLE IF EXISTS reports;

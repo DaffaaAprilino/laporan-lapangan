@@ -24,7 +24,7 @@ app.use("/api/reports", reportsRouter);
 // Info root — port ini API saja, dashboard ada di Vite (5173).
 app.get("/", (_req, res) => {
   res.json({
-    service: "MAPID Field Reports API",
+    service: "Field Reports API",
     endpoints: [
       "POST /api/auth/login { email, password }",
       "POST /api/auth/logout",

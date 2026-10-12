@@ -85,9 +85,9 @@ Dibuat oleh `npm run db:seed` (password sama untuk semuanya: `password123`).
 
 | Email | Role | Bisa apa |
 | --- | --- | --- |
-| `admin@mapid.test` | admin | Membuat akun, melihat semua laporan |
-| `approver@mapid.test` | approver | Approve/reject semua laporan |
-| `pelapor@mapid.test` | reporter | Membuat & mengedit laporan miliknya |
+| `admin@laporan.test` | admin | Membuat akun, melihat semua laporan |
+| `approver@laporan.test` | approver | Approve/reject semua laporan |
+| `pelapor@laporan.test` | reporter | Membuat & mengedit laporan miliknya |
 
 > Akun ini hanya untuk penilaian/demo. Ganti password dan `JWT_SECRET` bila dipakai sungguhan.
 
@@ -112,7 +112,7 @@ Contoh dengan curl:
 ```bash
 curl -c cookie.txt -X POST http://localhost:3001/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"approver@mapid.test","password":"password123"}'
+  -d '{"email":"approver@laporan.test","password":"password123"}'
 
 curl -b cookie.txt http://localhost:3001/api/reports
 

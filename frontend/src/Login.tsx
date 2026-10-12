@@ -34,7 +34,7 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
           <input
             type="email"
             autoComplete="username"
-            placeholder="nama@mapid.test"
+            placeholder="nama@laporan.test"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
