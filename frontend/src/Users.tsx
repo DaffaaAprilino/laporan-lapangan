@@ -38,10 +38,6 @@ function Users() {
 
   return (
     <>
-      <h2 className="section">
-        Kelola Pengguna <span className="count">{users.length}</span>
-      </h2>
-
       <form className="form form-users" onSubmit={handleSubmit}>
         <h2>Buat Akun</h2>
         <div className="field-row">
