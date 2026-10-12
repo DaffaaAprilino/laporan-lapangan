@@ -16,6 +16,7 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,14 +81,26 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
 
           <label className="field">
             <span>Password</span>
-            <input
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <span className="input-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="reveal"
+                aria-pressed={showPassword}
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                title={showPassword ? "Sembunyikan password" : "Tampilkan password"}
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? "Sembunyikan" : "Lihat"}
+              </button>
+            </span>
           </label>
 
           {error && (

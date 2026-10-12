@@ -149,6 +149,39 @@ body {
   gap: 0.9rem;
 }
 
+/* Input dengan tombol lihat/sembunyikan password */
+.input-wrap {
+  position: relative;
+  display: block;
+  font-size: inherit;
+  font-weight: 400;
+  color: inherit;
+}
+
+.input-wrap input {
+  width: 100%;
+  padding-right: 5.6rem;
+}
+
+.reveal {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  border: none;
+  border-radius: 6px;
+  background: none;
+  padding: 0.2rem 0.4rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--secondary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.reveal:hover { background: #eff6ff; }
+
 .btn-primary {
   width: 100%;
   margin-top: 0.2rem;
