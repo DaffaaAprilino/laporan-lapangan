@@ -1,38 +1,73 @@
 export type Status = "pending" | "approved" | "rejected";
+export type Role = "admin" | "reporter" | "approver";
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+  created_at?: string;
+}
 
 export interface Report {
   id: number;
   name: string;
   description: string;
   status: Status;
+  created_by: number;
+  created_by_name: string;
+  decided_by: number | null;
+  decided_by_name: string | null;
+  decided_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:3001/api/reports";
+// Basis API (tanpa /reports) — contoh: http://localhost:3001/api
+const API = (import.meta.env.VITE_API_URL || "http://localhost:3001/api").replace(/\/+$/, "");
 
-export async function fetchReports(): Promise<Report[]> {
-  const res = await fetch(API);
-  if (!res.ok) throw new Error("Failed to fetch reports");
-  return res.json();
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
 }
 
-export async function createReport(name: string, description: string): Promise<Report> {
-  const res = await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, description }),
+// credentials: "include" wajib agar cookie sesi httpOnly ikut terkirim.
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API}${path}`, {
+    credentials: "include",
+    headers: init?.body ? { "Content-Type": "application/json" } : undefined,
+    ...init,
   });
-  if (!res.ok) throw new Error("Failed to create report");
-  return res.json();
+  const body = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new ApiError(body?.error ?? "Terjadi kesalahan", res.status);
+  }
+  return body as T;
 }
 
-export async function updateStatus(id: number, status: Status): Promise<Report> {
-  const res = await fetch(`${API}/${id}/status`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
-  if (!res.ok) throw new Error("Failed to update status");
-  return res.json();
-}
+export const login = (email: string, password: string) =>
+  request<User>("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+
+export const logout = () => request<{ ok: true }>("/auth/logout", { method: "POST" });
+
+export const me = () => request<User>("/auth/me");
+
+export const fetchReports = () => request<Report[]>("/reports");
+
+export const createReport = (name: string, description: string) =>
+  request<Report>("/reports", { method: "POST", body: JSON.stringify({ name, description }) });
+
+export const updateReport = (id: number, name: string, description: string) =>
+  request<Report>(`/reports/${id}`, { method: "PATCH", body: JSON.stringify({ name, description }) });
+
+export const updateStatus = (id: number, status: Status) =>
+  request<Report>(`/reports/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
+
+export const fetchUsers = () => request<User[]>("/users");
+
+export const createUser = (name: string, email: string, password: string, role: Role) =>
+  request<User>("/users", { method: "POST", body: JSON.stringify({ name, email, password, role }) });
