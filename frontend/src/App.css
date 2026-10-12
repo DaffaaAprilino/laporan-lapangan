@@ -90,18 +90,163 @@ body {
 
 .btn-ghost:hover { background: #f1f5f9; }
 
-.container-narrow {
-  max-width: 460px;
+/* ---------- Halaman login ---------- */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
 }
 
-.form-login {
-  margin-bottom: 0;
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
 }
 
-.hint {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.35rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--primary);
+  color: #fff;
+}
+
+.brand h1 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
   margin: 0;
-  font-size: 0.78rem;
+}
+
+.brand-sub {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
   color: var(--muted);
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 0.2rem;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 9px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+.btn-primary:active:not(:disabled) { transform: scale(0.99); }
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.login-error {
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 9px;
+  font-size: 0.83rem;
+}
+
+/* Pintasan akun demo — hanya memudahkan penilaian. */
+.demo {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--border);
+}
+
+.demo-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.demo-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: #f8fafc;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.demo-chip:hover {
+  background: #eff6ff;
+  border-color: var(--secondary);
+}
+
+.demo-role {
+  flex: 0 0 5.2rem;
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.demo-email {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.demo-note {
+  margin: 0.7rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.demo-note code {
+  font-size: 0.75rem;
+  background: #e2e8f0;
+  border-radius: 4px;
+  padding: 0.05rem 0.3rem;
 }
 
 .loading {
@@ -197,7 +342,8 @@ h1 {
 }
 
 .form input,
-.form textarea {
+.form textarea,
+.login-card input {
   padding: 0.6rem 0.8rem;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -213,7 +359,8 @@ h1 {
 }
 
 .form input:focus,
-.form textarea:focus {
+.form textarea:focus,
+.login-card input:focus {
   outline: none;
   background: var(--card);
   border-color: var(--secondary);
@@ -470,6 +617,8 @@ textarea.inline {
 .btn-reject:focus-visible,
 .btn-save:focus-visible,
 .btn-edit:focus-visible,
+.btn-primary:focus-visible,
+.demo-chip:focus-visible,
 .btn-ghost:focus-visible,
 .form button:focus-visible {
   outline: 2px solid var(--secondary);
