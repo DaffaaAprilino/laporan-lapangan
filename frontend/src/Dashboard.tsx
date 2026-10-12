@@ -218,7 +218,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
               <form className="form" onSubmit={handleCreate}>
                 <h2>Tambah Laporan</h2>
                 <label className="field">
-                  <span>Nama</span>
+                  <span>Nama laporan</span>
                   <input
                     placeholder="Contoh: Jembatan rusak Cimahi"
                     maxLength={255}
@@ -250,7 +250,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
               <table>
                 <thead>
                   <tr>
-                    <th className="col-name">Nama</th>
+                    <th className="col-name">Nama laporan</th>
                     <th className="col-desc">Deskripsi</th>
                     <th className="col-status">Status</th>
                     <th className="col-actions">Aksi</th>
@@ -261,7 +261,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
                     const isEditing = editing?.id === r.id;
                     return (
                       <tr key={r.id}>
-                        <td className="cell-name" data-label="Nama">
+                        <td className="cell-name" data-label="Nama laporan">
                           {isEditing ? (
                             <input
                               className="inline"
