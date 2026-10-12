@@ -41,11 +41,11 @@ router.post(
     const description =
       typeof req.body?.description === "string" ? req.body.description.trim() : "";
     if (!name || !description) {
-      res.status(400).json({ error: "name and description are required" });
+      res.status(400).json({ error: "nama dan deskripsi wajib diisi" });
       return;
     }
     if (name.length > 255) {
-      res.status(400).json({ error: "name must be at most 255 characters" });
+      res.status(400).json({ error: "nama maksimal 255 karakter" });
       return;
     }
     const { rows } = await pool.query(
@@ -67,15 +67,15 @@ router.patch(
     const description =
       typeof req.body?.description === "string" ? req.body.description.trim() : "";
     if (!id) {
-      res.status(404).json({ error: "report not found" });
+      res.status(404).json({ error: "laporan tidak ditemukan" });
       return;
     }
     if (!name || !description) {
-      res.status(400).json({ error: "name and description are required" });
+      res.status(400).json({ error: "nama dan deskripsi wajib diisi" });
       return;
     }
     if (name.length > 255) {
-      res.status(400).json({ error: "name must be at most 255 characters" });
+      res.status(400).json({ error: "nama maksimal 255 karakter" });
       return;
     }
     const { rows } = await pool.query(
@@ -102,11 +102,11 @@ router.patch(
     const id = parseId(req.params.id);
     const { status } = req.body ?? {};
     if (status !== "approved" && status !== "rejected") {
-      res.status(400).json({ error: "status must be approved or rejected" });
+      res.status(400).json({ error: "status harus approved atau rejected" });
       return;
     }
     if (!id) {
-      res.status(404).json({ error: "report not found" });
+      res.status(404).json({ error: "laporan tidak ditemukan" });
       return;
     }
     const { rows } = await pool.query(
@@ -117,7 +117,7 @@ router.patch(
       [status, req.user!.id, id]
     );
     if (!rows[0]) {
-      res.status(404).json({ error: "report not found" });
+      res.status(404).json({ error: "laporan tidak ditemukan" });
       return;
     }
     const updated = await pool.query(`${SELECT_REPORTS} WHERE r.id = $1`, [id]);

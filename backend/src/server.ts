@@ -40,7 +40,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use((_req, res) => {
-  res.status(404).json({ error: "not found" });
+  res.status(404).json({ error: "endpoint tidak ditemukan" });
 });
 
 // Error middleware: detail hanya ke log server, client dapat pesan umum.
