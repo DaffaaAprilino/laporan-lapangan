@@ -36,6 +36,24 @@ body {
   min-height: 100vh;
 }
 
+/* Bilah atas + scrim hanya dipakai saat sidebar berubah jadi drawer. */
+.topbar {
+  display: none;
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.topbar-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--heading);
+}
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -120,13 +138,29 @@ body {
 .nav-item.active .nav-count { background: #dbeafe; color: var(--primary); }
 
 /* Kaki sidebar: identitas pengguna + tombol keluar, dipisah garis dari menu. */
-.side-user {
+.side-foot {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.side-user {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
+}
+
+.btn-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 40px;
+  font-size: 0.84rem;
 }
 
 .avatar {
@@ -191,10 +225,6 @@ body {
   background: #fef2f2;
   border-color: #fecaca;
   color: #b91c1c;
-}
-
-.side-user .btn-icon {
-  margin-left: auto;
 }
 
 .content {
@@ -822,52 +852,41 @@ textarea.inline {
   padding: 2rem 1rem;
 }
 
-/* Tablet sempit: sidebar jadi bilah atas, kolom Deskripsi dikecilkan agar Aksi lega */
+/* Layar sempit: sidebar jadi drawer yang dibuka tombol menu di bilah atas. */
 @media (max-width: 1024px) {
   .app {
     grid-template-columns: 1fr;
-    /* Tanpa ini, baris sidebar ikut melar mengisi 100vh → bilah atas jadi
-       tinggi dengan ruang kosong besar di bawahnya. */
+    /* Tanpa ini, baris pertama ikut melar mengisi 100vh → ruang kosong besar. */
     align-content: start;
   }
 
-  .sidebar {
-    position: static;
-    height: auto;
-    flex-direction: row;
-    flex-wrap: nowrap; /* satu baris; label menu disembunyikan di layar sangat sempit */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.6rem 1rem;
-    border-right: 0;
+    background: var(--card);
     border-bottom: 1px solid var(--border);
   }
 
-  .nav {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 0.25rem;
-    min-width: 0;
+  .sidebar {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    z-index: 40;
+    width: 264px;
+    max-width: 84vw;
+    height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 0 32px rgba(15, 23, 42, 0.18);
   }
 
-  .nav-item {
-    min-height: 44px; /* sasaran sentuh nyaman di tablet/HP */
-  }
-
-  /* Nama aplikasi disembunyikan: ikon menu sudah cukup di bilah atas. */
-  .side-brand-text {
-    display: none;
-  }
-
-  .side-user {
-    margin-top: 0;
-    margin-left: auto;
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .side-user-text {
-    display: none; /* identitas cukup dari avatar di bilah atas */
+  .sidebar.open {
+    transform: none;
   }
 
   .content {
@@ -996,19 +1015,6 @@ textarea.inline {
   .modal-actions button {
     flex: 1;
     min-height: 44px;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Sangat sempit: menu jadi ikon saja agar bilah tetap satu baris. Angka
-     ringkasan sudah ada di kartu KPI, dan tiap ikon punya aria-label + title. */
-  .nav-label,
-  .nav-count {
-    display: none;
-  }
-
-  .nav-item {
-    padding: 0.5rem 0.7rem;
   }
 }
 

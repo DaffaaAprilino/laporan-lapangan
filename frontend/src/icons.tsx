@@ -44,6 +44,16 @@ export function IconUsers({ size = 17 }: IconProps) {
   );
 }
 
+export function IconMenu({ size = 18 }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <g {...stroke} strokeWidth={1.9}>
+        <path d="M4 7h16M4 12h16M4 17h16" />
+      </g>
+    </svg>
+  );
+}
+
 export function IconLogout({ size = 17 }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">

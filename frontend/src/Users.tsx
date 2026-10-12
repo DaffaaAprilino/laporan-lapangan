@@ -135,8 +135,8 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
             <tr>
               <th className="col-user">Pengguna</th>
               <th className="col-role">Role</th>
-              <th className="col-count">Laporan</th>
-              <th className="col-created">Dibuat</th>
+              <th className="col-count">Laporan dibuat</th>
+              <th className="col-created">Akun dibuat</th>
               <th className="col-del">Aksi</th>
             </tr>
           </thead>
@@ -150,10 +150,10 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
                 <td data-label="Role">
                   <span className={`role role-${u.role}`}>{u.role}</span>
                 </td>
-                <td className="cell-count" data-label="Laporan">
+                <td className="cell-count" data-label="Laporan dibuat">
                   {u.report_count ?? 0}
                 </td>
-                <td className="cell-created" data-label="Dibuat">
+                <td className="cell-created" data-label="Akun dibuat">
                   {formatDate(u.created_at)}
                 </td>
                 <td className="cell-del" data-label="Aksi">
