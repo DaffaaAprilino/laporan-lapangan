@@ -1,18 +1,41 @@
-import { Request, RequestHandler, Response, Router } from "express";
+import { Request, Response, Router } from "express";
 import { pool } from "../db";
-
-// Express 4 tidak menangkap rejection dari async handler — teruskan ke error middleware.
-const asyncHandler =
-  (fn: (req: Request, res: Response) => Promise<unknown>): RequestHandler =>
-  (req, res, next) => {
-    fn(req, res).catch(next);
-  };
+import { asyncHandler, requireAuth, requireRole } from "../middleware";
 
 const router = Router();
 
-// Buat laporan — status awal 'pending'
+router.use(requireAuth);
+
+// Nama pelapor & pemutus ikut dikirim agar dashboard tidak perlu request tambahan.
+const SELECT_REPORTS = `
+  SELECT r.id, r.name, r.description, r.status,
+         r.created_by, reporter.name AS created_by_name,
+         r.decided_by, decider.name AS decided_by_name,
+         r.decided_at, r.created_at, r.updated_at
+  FROM reports r
+  JOIN users reporter ON reporter.id = r.created_by
+  LEFT JOIN users decider ON decider.id = r.decided_by
+`;
+
+const parseId = (raw: string) => (/^\d+$/.test(raw) ? Number(raw) : null);
+
+// Daftar laporan: pelapor hanya melihat miliknya, admin & approver melihat semua.
+router.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const own = req.user!.role === "reporter";
+    const { rows } = await pool.query(
+      `${SELECT_REPORTS} ${own ? "WHERE r.created_by = $1" : ""} ORDER BY r.created_at DESC`,
+      own ? [req.user!.id] : []
+    );
+    res.json(rows);
+  })
+);
+
+// Buat laporan — hanya pelapor; pemiliknya otomatis user yang login.
 router.post(
   "/",
+  requireRole("reporter"),
   asyncHandler(async (req, res) => {
     const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
     const description =
@@ -26,40 +49,79 @@ router.post(
       return;
     }
     const { rows } = await pool.query(
-      "INSERT INTO reports (name, description) VALUES ($1, $2) RETURNING *",
-      [name, description]
+      "INSERT INTO reports (name, description, created_by) VALUES ($1, $2, $3) RETURNING id",
+      [name, description, req.user!.id]
     );
-    res.status(201).json(rows[0]);
+    const created = await pool.query(`${SELECT_REPORTS} WHERE r.id = $1`, [rows[0].id]);
+    res.status(201).json(created.rows[0]);
   })
 );
 
-// Daftar laporan
-router.get(
-  "/",
-  asyncHandler(async (_req, res) => {
-    const { rows } = await pool.query("SELECT * FROM reports ORDER BY created_at DESC");
-    res.json(rows);
+// Edit laporan — pelapor pemiliknya, dan hanya selama statusnya masih 'pending'.
+router.patch(
+  "/:id",
+  requireRole("reporter"),
+  asyncHandler(async (req, res) => {
+    const id = parseId(req.params.id);
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+    const description =
+      typeof req.body?.description === "string" ? req.body.description.trim() : "";
+    if (!id) {
+      res.status(404).json({ error: "report not found" });
+      return;
+    }
+    if (!name || !description) {
+      res.status(400).json({ error: "name and description are required" });
+      return;
+    }
+    if (name.length > 255) {
+      res.status(400).json({ error: "name must be at most 255 characters" });
+      return;
+    }
+    const { rows } = await pool.query(
+      `UPDATE reports SET name = $1, description = $2, updated_at = NOW()
+       WHERE id = $3 AND created_by = $4 AND status = 'pending'
+       RETURNING id`,
+      [name, description, id, req.user!.id]
+    );
+    if (!rows[0]) {
+      // Bukan miliknya / sudah diputuskan / tidak ada — pelapor tidak perlu tahu yang mana.
+      res.status(404).json({ error: "laporan tidak ditemukan atau sudah diputuskan" });
+      return;
+    }
+    const updated = await pool.query(`${SELECT_REPORTS} WHERE r.id = $1`, [id]);
+    res.json(updated.rows[0]);
   })
 );
 
-// Ubah status — hanya approved / rejected
+// Approve / reject — hanya approver. Status boleh diubah kembali, keputusan terakhir yang dicatat.
 router.patch(
   "/:id/status",
+  requireRole("approver"),
   asyncHandler(async (req, res) => {
+    const id = parseId(req.params.id);
     const { status } = req.body ?? {};
     if (status !== "approved" && status !== "rejected") {
       res.status(400).json({ error: "status must be approved or rejected" });
       return;
     }
-    const { rows } = await pool.query(
-      "UPDATE reports SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
-      [status, req.params.id]
-    );
-    if (rows.length === 0) {
+    if (!id) {
       res.status(404).json({ error: "report not found" });
       return;
     }
-    res.json(rows[0]);
+    const { rows } = await pool.query(
+      `UPDATE reports
+       SET status = $1, decided_by = $2, decided_at = NOW(), updated_at = NOW()
+       WHERE id = $3
+       RETURNING id`,
+      [status, req.user!.id, id]
+    );
+    if (!rows[0]) {
+      res.status(404).json({ error: "report not found" });
+      return;
+    }
+    const updated = await pool.query(`${SELECT_REPORTS} WHERE r.id = $1`, [id]);
+    res.json(updated.rows[0]);
   })
 );
 
