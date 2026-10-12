@@ -7,12 +7,6 @@ import Users from "./Users";
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
 
-const ROLE_LABEL: Record<User["role"], string> = {
-  admin: "Admin",
-  reporter: "Pelapor",
-  approver: "Approver",
-};
-
 function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [reports, setReports] = useState<Report[]>([]);
   const [name, setName] = useState("");
@@ -23,6 +17,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
     null
   );
   const [view, setView] = useState<"laporan" | "pengguna">("laporan");
+  const [usersCount, setUsersCount] = useState(0);
 
   const isReporter = user.role === "reporter";
   const isApprover = user.role === "approver";
@@ -80,7 +75,13 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
   const counts: Record<Status, number> = { pending: 0, approved: 0, rejected: 0 };
   for (const r of reports) counts[r.status] += 1;
 
-  const reportsTitle = isReporter ? "Laporan Saya" : "Semua Laporan";
+  const reporters = new Set(reports.map((r) => r.created_by)).size;
+  const reportsTitle = isReporter ? "Laporan Saya" : "Laporan";
+
+  // Ringkasan di bawah judul: cakupan data + yang perlu ditindak, bukan
+  // pengulangan judul halaman atau angka yang sudah ada di kartu KPI.
+  const scope = isReporter ? "Milik Anda" : `Dari ${reporters} pelapor`;
+  const summary = `${scope} · ${counts.pending} menunggu keputusan`;
 
   return (
     <div className="app">
@@ -100,7 +101,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
             onClick={() => setView("laporan")}
           >
             <IconDocument />
-            {reportsTitle}
+            <span className="nav-label">{reportsTitle}</span>
             <span className="nav-count">{reports.length}</span>
           </button>
           {isAdmin && (
@@ -111,7 +112,7 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
               onClick={() => setView("pengguna")}
             >
               <IconUsers />
-              Pengguna
+              <span className="nav-label">Pengguna</span>
             </button>
           )}
         </nav>
@@ -124,7 +125,11 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
             <span className="side-user-name" title={user.name}>
               {user.name}
             </span>
-            <span className={`role role-${user.role}`}>{ROLE_LABEL[user.role]}</span>
+            {/* Email, bukan label role: role akun demo sering sama dengan namanya
+                sehingga tampil dobel ("Admin" + badge ADMIN). */}
+            <span className="side-user-mail" title={user.email}>
+              {user.email}
+            </span>
           </span>
           <button
             type="button"
@@ -142,18 +147,12 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
         <header className="page-head">
           <h1>{view === "pengguna" ? "Kelola Pengguna" : reportsTitle}</h1>
           <p className="page-sub">
-            {view === "pengguna"
-              ? "Buat akun dan atur perannya. Tidak ada registrasi mandiri."
-              : isReporter
-                ? "Buat laporan baru dan sunting selama statusnya masih pending."
-                : isApprover
-                  ? "Tinjau laporan lapangan, lalu approve atau reject."
-                  : "Pantau seluruh laporan lapangan yang masuk."}
+            {view === "pengguna" ? `${usersCount} akun terdaftar` : summary}
           </p>
         </header>
 
         {view === "pengguna" ? (
-          <Users />
+          <Users currentUserId={user.id} onCount={setUsersCount} onDeleted={load} />
         ) : (
           <>
             <div className="stats">

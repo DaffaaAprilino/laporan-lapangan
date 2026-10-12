@@ -44,3 +44,15 @@ export function IconLogout({ size = 17 }: IconProps) {
     </svg>
   );
 }
+
+export function IconTrash({ size = 17 }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <g {...stroke}>
+        <path d="M4 7h16M9.5 7V5.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V7" />
+        <path d="M6.5 7l.8 12a1 1 0 0 0 1 .9h7.4a1 1 0 0 0 1-.9l.8-12" />
+        <path d="M10.5 11v6M13.5 11v6" />
+      </g>
+    </svg>
+  );
+}

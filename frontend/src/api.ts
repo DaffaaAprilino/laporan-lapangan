@@ -7,6 +7,7 @@ export interface User {
   email: string;
   role: Role;
   created_at?: string;
+  report_count?: number;
 }
 
 export interface Report {
@@ -71,3 +72,6 @@ export const fetchUsers = () => request<User[]>("/users");
 
 export const createUser = (name: string, email: string, password: string, role: Role) =>
   request<User>("/users", { method: "POST", body: JSON.stringify({ name, email, password, role }) });
+
+export const deleteUser = (id: number) =>
+  request<{ deletedReports: number }>(`/users/${id}`, { method: "DELETE" });

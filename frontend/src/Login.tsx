@@ -95,10 +95,6 @@ function Login({ onSuccess }: { onSuccess: (user: User) => void }) {
             {busy ? "Memproses…" : "Masuk"}
           </button>
         </form>
-
-        <p className="login-note">
-          Akun demo untuk mencoba tiap role tercantum di README repositori.
-        </p>
       </section>
     </main>
   );

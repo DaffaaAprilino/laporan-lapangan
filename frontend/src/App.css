@@ -76,14 +76,15 @@ body {
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.15rem;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0.7rem;
+  min-height: 40px;
+  padding: 0.5rem 0.7rem;
   border: none;
   border-radius: 9px;
   background: none;
@@ -99,6 +100,12 @@ body {
 .nav-item svg { flex: 0 0 auto; }
 .nav-item:hover { background: #f1f5f9; color: var(--heading); }
 .nav-item.active { background: #eff6ff; color: var(--primary); }
+
+.nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .nav-count {
   margin-left: auto;
@@ -151,19 +158,20 @@ body {
   white-space: nowrap;
 }
 
-.side-user .role {
-  align-self: flex-start;
-  padding: 0.05rem 0.4rem;
-  font-size: 0.62rem;
+.side-user-mail {
+  font-size: 0.72rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .btn-icon {
-  margin-left: auto;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--card);
@@ -173,9 +181,20 @@ body {
 }
 
 .btn-icon:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: var(--heading);
+}
+
+/* Varian bahaya: dipakai tombol hapus akun. */
+.btn-icon-danger:hover {
   background: #fef2f2;
   border-color: #fecaca;
   color: #b91c1c;
+}
+
+.side-user .btn-icon {
+  margin-left: auto;
 }
 
 .content {
@@ -347,16 +366,6 @@ body {
   font-size: 0.83rem;
 }
 
-/* Catatan kecil di bawah kartu login. */
-.login-note {
-  margin: 1.25rem 0 0;
-  padding-top: 1rem;
-  border-top: 1px dashed var(--border);
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-align: center;
-}
-
 .loading {
   color: var(--muted);
 }
@@ -503,6 +512,13 @@ table {
 .col-status { width: 18%; }
 .col-actions { width: 20%; }
 
+/* Tabel pengguna punya kolom sendiri. */
+.col-user { width: 34%; }
+.col-role { width: 16%; }
+.col-count { width: 12%; }
+.col-created { width: 26%; }
+.col-del { width: 12%; }
+
 th,
 td {
   text-align: left;
@@ -568,6 +584,36 @@ td.cell-desc {
 
 td.cell-actions {
   white-space: nowrap;
+}
+
+/* Kolom pengguna: nama di atas, email di bawahnya. */
+td.cell-user .name {
+  display: block;
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+td.cell-user .meta {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+td.cell-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+td.cell-created {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+td.cell-del {
+  text-align: right;
 }
 
 /* Badges */
@@ -699,9 +745,71 @@ textarea.inline {
 .btn-edit:focus-visible,
 .btn-primary:focus-visible,
 .btn-ghost:focus-visible,
+.btn-icon:focus-visible,
+.btn-danger:focus-visible,
 .form button:focus-visible {
   outline: 2px solid var(--secondary);
   outline-offset: 2px;
+}
+
+.btn-danger {
+  border: none;
+  border-radius: 9px;
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  background: #dc2626;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-danger:hover:not(:disabled) { background: #b91c1c; }
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Dialog konfirmasi tindakan merusak (hapus akun). */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.modal {
+  width: 100%;
+  max-width: 400px;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+}
+
+.modal h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.modal-text {
+  margin: 0 0 1.25rem;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .error {
@@ -721,9 +829,12 @@ textarea.inline {
 }
 
 /* Tablet sempit: sidebar jadi bilah atas, kolom Deskripsi dikecilkan agar Aksi lega */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .app {
     grid-template-columns: 1fr;
+    /* Tanpa ini, baris sidebar ikut melar mengisi 100vh → bilah atas jadi
+       tinggi dengan ruang kosong besar di bawahnya. */
+    align-content: start;
   }
 
   .sidebar {
@@ -732,8 +843,8 @@ textarea.inline {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.6rem 0.75rem;
-    padding: 0.7rem 1rem;
+    gap: 0.5rem 0.75rem;
+    padding: 0.6rem 1rem;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
@@ -741,6 +852,11 @@ textarea.inline {
   .nav {
     flex-direction: row;
     flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .nav-item {
+    min-height: 44px; /* sasaran sentuh nyaman di tablet/HP */
   }
 
   .side-user {
@@ -750,14 +866,18 @@ textarea.inline {
     border-top: 0;
   }
 
+  .side-user-text {
+    display: none; /* identitas cukup dari avatar di bilah atas */
+  }
+
   .content {
     padding: 1.5rem 1.25rem 3rem;
   }
 
-  .col-name { width: 24%; }
-  .col-desc { width: 34%; }
-  .col-status { width: 20%; }
-  .col-actions { width: 22%; }
+  .col-name { width: 26%; }
+  .col-desc { width: 36%; }
+  .col-status { width: 18%; }
+  .col-actions { width: 20%; }
 }
 
 @media (max-width: 700px) {
@@ -769,19 +889,11 @@ textarea.inline {
     display: none;
   }
 
-  .side-user-name {
-    display: none;
-  }
-
-  .side-user .role {
-    display: none;
-  }
-
   .page-head h1 {
     font-size: 1.25rem;
   }
 
-  /* Layar sempit: tabel jadi kartu per laporan, tanpa scroll horizontal. */
+  /* Tabel panjang → kartu per baris, tanpa scroll horizontal. */
   .table-wrap {
     background: none;
     border: 0;
@@ -806,7 +918,7 @@ textarea.inline {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 0.7rem 0.9rem;
+    padding: 0.75rem 0.95rem;
     margin-bottom: 0.6rem;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   }
@@ -821,11 +933,11 @@ textarea.inline {
 
   td {
     display: grid;
-    grid-template-columns: 5.5rem 1fr;
+    grid-template-columns: 6.5rem 1fr;
     gap: 0.6rem;
     align-items: baseline;
     border: 0;
-    padding: 0.3rem 0;
+    padding: 0.35rem 0;
   }
 
   td::before {
@@ -847,6 +959,35 @@ textarea.inline {
     padding-top: 0.5rem;
   }
 
+  /* Baris aksi tanpa label: tombol jadi selebar kartu agar mudah ditekan. */
+  td.cell-actions:not(:empty)::before {
+    content: none;
+  }
+
+  td.cell-actions .actions,
+  td.cell-del .btn-icon {
+    grid-column: 1 / -1;
+  }
+
+  td.cell-del {
+    padding-top: 0.4rem;
+  }
+
+  /* Sasaran sentuh 44px + rata kanan agar terbaca sebagai aksi baris. */
+  td.cell-del .btn-icon {
+    justify-self: end;
+    width: 44px;
+    height: 44px;
+  }
+
+  .cell-actions .btn-approve,
+  .cell-actions .btn-reject,
+  .cell-actions .btn-save,
+  .cell-actions .btn-edit {
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+  }
+
   td.empty {
     display: block;
     text-align: center;
@@ -854,6 +995,11 @@ textarea.inline {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    min-height: 44px;
   }
 }
 

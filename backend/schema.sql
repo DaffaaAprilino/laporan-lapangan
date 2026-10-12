@@ -22,9 +22,11 @@ CREATE TABLE reports (
   status      VARCHAR(20) NOT NULL DEFAULT 'pending'
               CHECK (status IN ('pending', 'approved', 'rejected')),
   -- Pelapor pemilik laporan; laporan hanya terlihat olehnya (admin & approver melihat semua).
-  created_by  INTEGER NOT NULL REFERENCES users (id),
-  -- Catatan keputusan terakhir: siapa dan kapan.
-  decided_by  INTEGER REFERENCES users (id),
+  -- Menghapus akun pelapor ikut menghapus laporannya (dikonfirmasi di UI).
+  created_by  INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+  -- Catatan keputusan terakhir: siapa dan kapan. Akun pemutus boleh dihapus tanpa
+  -- menghapus laporan, jadi kolom ini dikosongkan (bukan ikut terhapus).
+  decided_by  INTEGER REFERENCES users (id) ON DELETE SET NULL,
   decided_at  TIMESTAMPTZ,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()

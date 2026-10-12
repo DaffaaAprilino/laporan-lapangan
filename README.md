@@ -13,8 +13,9 @@ Aplikasi web untuk mengelola laporan lapangan: REST API + dashboard berautentika
 - Pelapor dapat **mengedit** laporannya selama statusnya masih `pending`.
 - Approver melihat semua laporan dan dapat **approve/reject**; status boleh diubah kembali.
 - Setiap keputusan mencatat **siapa** (approver) dan **kapan** (`decided_by`, `decided_at`).
-- Admin membuat akun pengguna (tidak ada registrasi mandiri) dan melihat semua laporan.
-- Ringkasan jumlah laporan per status pada dashboard.
+- Admin membuat akun pengguna (tidak ada registrasi mandiri), melihat semua laporan, dan dapat **menghapus akun** — dengan dialog konfirmasi yang menyebutkan berapa laporan ikut terhapus.
+- Ringkasan jumlah laporan per status pada dashboard; sidebar menampilkan menu sesuai peran.
+- Dashboard responsif: sidebar tetap di layar lebar, berubah jadi bilah atas di tablet/HP, dan tabel berubah jadi kartu di layar sempit.
 
 ## Arsitektur
 
@@ -41,7 +42,7 @@ Alur satu permintaan: `cookie → requireAuth (baca JWT, ambil user dari DB) →
 | Buat laporan | ✅ | ❌ | ❌ |
 | Edit laporan | miliknya, status `pending` | ❌ | ❌ |
 | Approve / reject | ❌ | ✅ | ❌ |
-| Kelola pengguna | ❌ | ❌ | ✅ |
+| Kelola pengguna (buat/hapus) | ❌ | ❌ | ✅ |
 
 Role sengaja dipisah agar hak approve dan hak melapor tidak berada di satu akun. Endpoint yang salah role dibalas `403`; yang belum login dibalas `401`.
 
@@ -100,8 +101,9 @@ Alur uji cepat: login sebagai **pelapor** → tambah laporan → keluar → logi
 | POST | `/api/auth/login` | publik | `{ email, password }` → set cookie sesi |
 | POST | `/api/auth/logout` | publik | Hapus cookie sesi |
 | GET | `/api/auth/me` | login | Profil user yang sedang masuk |
-| GET | `/api/users` | admin | Daftar pengguna |
+| GET | `/api/users` | admin | Daftar pengguna + jumlah laporan tiap akun |
 | POST | `/api/users` | admin | `{ name, email, password, role }` |
+| DELETE | `/api/users/:id` | admin | Hapus akun (laporannya ikut terhapus) |
 | GET | `/api/reports` | login | reporter: miliknya; approver & admin: semua |
 | POST | `/api/reports` | reporter | `{ name, description }` |
 | PATCH | `/api/reports/:id` | reporter (pemilik) | `{ name, description }` — hanya saat `pending` |
@@ -127,7 +129,9 @@ curl -b cookie.txt -X PATCH http://localhost:3001/api/reports/1/status \
 `backend/schema.sql` — jalankan lewat `npm run db:migrate` (atau `psql "$DATABASE_URL" -f backend/schema.sql`).
 
 - `users` — `id`, `name`, `email` (unik), `password_hash` (scrypt `salt:hash`), `role` (`admin`/`reporter`/`approver`), `created_at`.
-- `reports` — `id`, `name`, `description`, `status` (`pending`/`approved`/`rejected`, default `pending`), `created_by` → `users.id`, `decided_by` → `users.id`, `decided_at`, `created_at`, `updated_at`.
+- `reports` — `id`, `name`, `description`, `status` (`pending`/`approved`/`rejected`, default `pending`), `created_by` → `users.id` (**ON DELETE CASCADE**), `decided_by` → `users.id` (**ON DELETE SET NULL**), `decided_at`, `created_at`, `updated_at`.
+
+Perilaku saat akun dihapus: laporan milik pelapor ikut terhapus, sedangkan laporan yang pernah ia putuskan tetap ada — hanya kolom `decided_by` yang dikosongkan sehingga riwayat status tidak hilang. Admin tidak bisa menghapus akunnya sendiri, dan sistem menolak menghapus admin terakhir.
 
 Script bantu (dari folder `backend`):
 
