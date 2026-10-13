@@ -145,7 +145,30 @@ Isi tabel juga bisa dilihat di **Neon Console → Tables**, atau `psql "$DATABAS
 ## Catatan Keamanan
 
 - Password di-hash dengan **scrypt** (`node:crypto`) + salt acak; verifikasi memakai perbandingan waktu-tetap.
-- Sesi berupa JWT 8 jam di cookie `httpOnly` + `sameSite=lax` (dan `secure` saat `NODE_ENV=production`).
+- Sesi berupa JWT 8 jam di cookie `httpOnly`; `sameSite=lax` di localhost dan `sameSite=None; secure` di production (wajib agar sesi bertahan lintas domain Vercel → Render).
+
+## Deploy (Online)
+
+Aplikasi ter-deploy dan dapat diakses kapan pun:
+
+- **Dashboard (frontend):** https://laporan-lapangan.vercel.app
+- **API (backend):** https://mapid-backend.onrender.com — buka `/` untuk daftar endpoint, `/api/health` untuk health check (`{"ok":true}`)
+- **Database:** Neon (serverless PostgreSQL)
+
+Login pakai akun demo di [bagian Akun Demo](#akun-demo).
+
+### Arsitektur deploy
+
+| Bagian | Platform | Catatan |
+| --- | --- | --- |
+| Frontend (Vite) | Vercel | Root directory `frontend`, env `VITE_API_URL=https://mapid-backend.onrender.com/api` |
+| Backend (Express) | Render (free) | Root directory `backend`, build `npm install && npm run build`, start `npm start` |
+| Database | Neon | Connection string di env `DATABASE_URL` Render |
+
+Env backend di Render: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN=https://laporan-lapangan.vercel.app`. Cookie sesi memakai `SameSite=None; Secure` di production agar login bertahan lintas domain Vercel → Render.
+
+> Catatan free tier: instance Render tidur setelah 15 menit tanpa traffic dan request pertama setelah bangun tertunda ±50 detik. Service ini dijaga tetap hidup oleh ping berkala ke `/api/health`; bila di-hosting sendiri tanpa ping, buka link satu kali dulu sebelum dipakai.
+
 - Login gagal membalas pesan yang sama untuk email tidak dikenal dan password salah.
 - Endpoint hanya menerima `approved`/`rejected` sebagai status; kolom `status` juga dibatasi `CHECK` di database.
 - Validasi ada di sisi server (nama wajib, maksimal 255 karakter, password minimal 6 karakter) — bukan hanya di UI.
