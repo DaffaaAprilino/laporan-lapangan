@@ -63,7 +63,10 @@ export const createReport = (name: string, description: string) =>
   request<Report>("/reports", { method: "POST", body: JSON.stringify({ name, description }) });
 
 export const updateReport = (id: number, name: string, description: string) =>
-  request<Report>(`/reports/${id}`, { method: "PATCH", body: JSON.stringify({ name, description }) });
+  request<Report>(`/reports/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ name, description }),
+  });
 
 export const updateStatus = (id: number, status: Status) =>
   request<Report>(`/reports/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) });
@@ -71,7 +74,10 @@ export const updateStatus = (id: number, status: Status) =>
 export const fetchUsers = () => request<User[]>("/users");
 
 export const createUser = (name: string, email: string, password: string, role: Role) =>
-  request<User>("/users", { method: "POST", body: JSON.stringify({ name, email, password, role }) });
+  request<User>("/users", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password, role }),
+  });
 
 export const deleteUser = (id: number) =>
   request<{ deletedReports: number }>(`/users/${id}`, { method: "DELETE" });

@@ -44,16 +44,6 @@ export function IconUsers({ size = 17 }: IconProps) {
   );
 }
 
-export function IconMenu({ size = 18 }: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
-      <g {...stroke} strokeWidth={1.9}>
-        <path d="M4 7h16M4 12h16M4 17h16" />
-      </g>
-    </svg>
-  );
-}
-
 export function IconLogout({ size = 17 }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
@@ -74,6 +64,21 @@ export function IconTrash({ size = 17 }: IconProps) {
         <path d="M6.5 7l.8 12a1 1 0 0 0 1 .9h7.4a1 1 0 0 0 1-.9l.8-12" />
         <path d="M10.5 11v6M13.5 11v6" />
       </g>
+    </svg>
+  );
+}
+
+export function IconCheck({ size = 15 }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <path
+        d="M4.5 12.5 10 18 19.5 7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

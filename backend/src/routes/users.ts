@@ -94,7 +94,10 @@ router.delete(
     }
 
     // Dihitung dulu agar UI bisa memberi tahu berapa laporan yang ikut terhapus.
-    const reports = await pool.query("DELETE FROM reports WHERE created_by = $1 RETURNING id", [id]);
+    const reports = await pool.query(
+      "DELETE FROM reports WHERE created_by = $1 RETURNING id",
+      [id]
+    );
     await pool.query("DELETE FROM users WHERE id = $1", [id]);
     res.json({ deletedReports: reports.rowCount ?? 0 });
   })

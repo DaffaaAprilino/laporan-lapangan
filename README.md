@@ -14,8 +14,9 @@ Aplikasi web untuk mengelola laporan lapangan: REST API + dashboard berautentika
 - Approver melihat semua laporan dan dapat **approve/reject**; status boleh diubah kembali.
 - Setiap keputusan mencatat **siapa** (approver) dan **kapan** (`decided_by`, `decided_at`).
 - Admin membuat akun pengguna (tidak ada registrasi mandiri), melihat semua laporan, dan dapat **menghapus akun** — dengan dialog konfirmasi yang menyebutkan berapa laporan ikut terhapus.
-- Ringkasan jumlah laporan per status pada dashboard; sidebar menampilkan menu sesuai peran.
-- Dashboard responsif: sidebar tetap di layar lebar, berubah jadi bilah atas di tablet/HP, dan tabel berubah jadi kartu di layar sempit.
+- Ringkasan jumlah laporan per status (total, pending, approved, rejected) pada dashboard.
+- Satu bilah atas untuk semua peran; menu navigasi hanya muncul untuk admin (Laporan / Pengguna), karena peran lain hanya punya satu halaman.
+- Responsif: di layar sempit nama aplikasi & nama pengguna disembunyikan, dan tabel berubah jadi kartu per baris tanpa scroll horizontal.
 
 ## Arsitektur
 

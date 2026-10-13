@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Report, Status, User } from "./api";
 import { ApiError, createReport, fetchReports, updateReport, updateStatus } from "./api";
-import { IconDocument, IconList, IconLogout, IconMenu, IconUsers } from "./icons";
+import { IconDocument, IconList, IconLogout, IconUsers } from "./icons";
 import Users from "./Users";
 
 const formatDate = (iso: string) =>
@@ -17,7 +17,6 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
     null
   );
   const [view, setView] = useState<"laporan" | "pengguna">("laporan");
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const isReporter = user.role === "reporter";
   const isApprover = user.role === "approver";
@@ -30,16 +29,6 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
   };
 
   useEffect(load, []);
-
-  // Drawer bisa ditutup dengan tombol Esc, bukan hanya klik scrim.
-  useEffect(() => {
-    if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [menuOpen]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,85 +78,60 @@ function Dashboard({ user, onLogout }: { user: User; onLogout: () => void }) {
 
   return (
     <div className="app">
-      {/* Muncul hanya saat sidebar jadi drawer (layar sempit). */}
-      <header className="topbar">
-        <button
-          type="button"
-          className="btn-icon"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Buka menu"
-          aria-expanded={menuOpen}
-          aria-controls="sidebar"
-        >
-          <IconMenu />
-        </button>
-        <span className="topbar-title">Laporan Lapangan</span>
-      </header>
+      <header className="appbar">
+        <span className="brand-mark" aria-hidden="true">
+          <IconDocument size={20} />
+        </span>
+        <span className="appbar-brand">Laporan Lapangan</span>
 
-      {menuOpen && (
-        <div className="scrim" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-      )}
-
-      <aside id="sidebar" className={`sidebar ${menuOpen ? "open" : ""}`}>
-        <div className="side-brand">
-          <span className="brand-mark" aria-hidden="true">
-            <IconDocument size={20} />
-          </span>
-          <span className="side-brand-text">Laporan Lapangan</span>
-        </div>
-
-        <nav className="nav">
-          <button
-            type="button"
-            className={`nav-item ${view === "laporan" ? "active" : ""}`}
-            aria-current={view === "laporan" ? "page" : undefined}
-            onClick={() => {
-              setView("laporan");
-              setMenuOpen(false);
-            }}
-          >
-            <IconList />
-            <span className="nav-label">{reportsTitle}</span>
-            <span className="nav-count">{reports.length}</span>
-          </button>
-          {isAdmin && (
+        {/* Navigasi hanya muncul saat menu lebih dari satu (admin). */}
+        {isAdmin && (
+          <nav className="appnav">
+            <button
+              type="button"
+              className={`nav-item ${view === "laporan" ? "active" : ""}`}
+              aria-current={view === "laporan" ? "page" : undefined}
+              aria-label="Laporan"
+              title="Laporan"
+              onClick={() => setView("laporan")}
+            >
+              <IconList />
+              <span className="nav-text">Laporan</span>
+              <span className="nav-count">{reports.length}</span>
+            </button>
             <button
               type="button"
               className={`nav-item ${view === "pengguna" ? "active" : ""}`}
               aria-current={view === "pengguna" ? "page" : undefined}
-              onClick={() => {
-                setView("pengguna");
-                setMenuOpen(false);
-              }}
+              aria-label="Pengguna"
+              title="Pengguna"
+              onClick={() => setView("pengguna")}
             >
               <IconUsers />
-              <span className="nav-label">Pengguna</span>
+              <span className="nav-text">Pengguna</span>
             </button>
-          )}
-        </nav>
+          </nav>
+        )}
 
-        <div className="side-foot">
-          <div className="side-user">
-            <span className="avatar" aria-hidden="true">
-              {user.name.charAt(0).toUpperCase()}
-            </span>
-            <span className="side-user-text">
-              <span className="side-user-name" title={user.name}>
-                {user.name}
-              </span>
-              {/* Email, bukan label role: role akun demo sering sama dengan namanya
-                  sehingga tampil dobel ("Admin" + badge ADMIN). */}
-              <span className="side-user-mail" title={user.email}>
-                {user.email}
-              </span>
-            </span>
-          </div>
-          <button type="button" className="btn-ghost btn-logout" onClick={onLogout}>
+        <div className="appbar-user">
+          <span className="avatar" aria-hidden="true">
+            {user.name.charAt(0).toUpperCase()}
+          </span>
+          <span className="appbar-name" title={`${user.name} · ${user.email}`}>
+            {user.name}
+          </span>
+          <button
+            type="button"
+            className="btn-ghost btn-logout"
+            onClick={onLogout}
+            title="Keluar"
+            aria-label="Keluar"
+          >
             <IconLogout />
-            Keluar
+            <span className="btn-logout-text">Keluar</span>
           </button>
         </div>
-      </aside>
+      </header>
 
       <main className="content">
         <header className="page-head">

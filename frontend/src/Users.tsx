@@ -1,21 +1,51 @@
 import { useEffect, useState } from "react";
 import type { Role, User } from "./api";
 import { ApiError, createUser, deleteUser, fetchUsers } from "./api";
-import { IconTrash } from "./icons";
+import { IconCheck, IconTrash } from "./icons";
 
 const ROLES: Role[] = ["reporter", "approver", "admin"];
+
+const ROLE_LABEL: Record<Role, string> = {
+  reporter: "Pelapor",
+  approver: "Approver",
+  admin: "Admin",
+};
+
+// Satu kalimat per role: pengguna baru tahu apa yang bisa dilakukan akun
+// yang ia buat tanpa harus menebak dari nama rolenya.
+const ROLE_DESC: Record<Role, string> = {
+  reporter: "Membuat dan mengedit laporan sendiri",
+  approver: "Menyetujui atau menolak laporan masuk",
+  admin: "Mengelola akun dan seluruh data",
+};
 
 const formatDate = (iso?: string) =>
   iso ? new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" }) : "—";
 
 function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted: () => void }) {
   const [users, setUsers] = useState<User[]>([]);
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "reporter" as Role });
+  // Role tidak diisi default: pengguna harus memilih secara sadar.
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "" as Role | "",
+  });
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
   const [confirming, setConfirming] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Tutup dialog dengan tombol Escape (keyboard a11y).
+  useEffect(() => {
+    if (!confirming) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !deleting) setConfirming(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [confirming, deleting]);
 
   const load = () => {
     fetchUsers()
@@ -27,6 +57,7 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.role) return; // pengaman; `required` pada radio sudah mencegah submit
     setError("");
     setNotice("");
     setBusy(true);
@@ -34,7 +65,7 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
       const created = await createUser(form.name, form.email, form.password, form.role);
       setUsers((us) => [...us, created]);
       setNotice(`Akun ${created.email} dibuat.`);
-      setForm({ name: "", email: "", password: "", role: "reporter" });
+      setForm({ name: "", email: "", password: "", role: "" });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Gagal membuat akun");
     } finally {
@@ -67,7 +98,8 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
 
   return (
     <>
-      <form className="form form-users" onSubmit={handleSubmit}>
+      <div className="users-grid">
+        <form className="form form-users" onSubmit={handleSubmit}>
         <h2>Buat Akun</h2>
         <div className="field-row">
           <label className="field">
@@ -91,7 +123,8 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
           <label className="field">
             <span>Password</span>
             <input
-              type="text"
+              type="password"
+              autoComplete="new-password"
               minLength={6}
               placeholder="min. 6 karakter"
               value={form.password}
@@ -99,25 +132,42 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
               required
             />
           </label>
-          <label className="field">
-            <span>Role</span>
-            <select
-              value={form.role}
-              onChange={(e) => setForm({ ...form, role: e.target.value as Role })}
-            >
-              {ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {role}
-                </option>
-              ))}
-            </select>
-          </label>
+        </div>
+        <div className="field">
+          <span>Role</span>
+          {/* Kartu radio, bukan toggle: satu pilihan selalu jelas terpilih,
+              dan deskripsi singkat menjelaskan hak tiap role. */}
+          <div className="role-cards" role="radiogroup" aria-label="Role akun baru">
+            {ROLES.map((role) => (
+              <label
+                key={role}
+                className={`role-card ${form.role === role ? "checked" : ""}`}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value={role}
+                  checked={form.role === role}
+                  onChange={() => setForm({ ...form, role })}
+                  required
+                />
+                <span className="role-card-check" aria-hidden="true">
+                  <IconCheck size={13} />
+                </span>
+                <span className="role-card-body">
+                  <span className="role-card-name">{ROLE_LABEL[role]}</span>
+                  <span className="role-card-desc">{ROLE_DESC[role]}</span>
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
         <button type="submit" disabled={busy}>
-          {busy ? "Menyimpan…" : "Buat Akun"}
+          {busy ? "Menyimpan…" : "Simpan"}
         </button>
       </form>
 
+      <div className="users-main">
       {notice && (
         <p className="notice" role="status">
           {notice}
@@ -129,14 +179,14 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
         </p>
       )}
 
+      <h2 className="table-title">Daftar Akun</h2>
       <div className="table-wrap">
         <table className="table-users">
           <thead>
             <tr>
               <th className="col-user">Pengguna</th>
               <th className="col-role">Role</th>
-              <th className="col-count">Laporan dibuat</th>
-              <th className="col-created">Akun dibuat</th>
+              <th className="col-created">Terdaftar</th>
               <th className="col-del">Aksi</th>
             </tr>
           </thead>
@@ -148,12 +198,9 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
                   <span className="meta">{u.email}</span>
                 </td>
                 <td data-label="Role">
-                  <span className={`role role-${u.role}`}>{u.role}</span>
+                  <span className={`role role-${u.role}`}>{ROLE_LABEL[u.role]}</span>
                 </td>
-                <td className="cell-count" data-label="Laporan dibuat">
-                  {u.report_count ?? 0}
-                </td>
-                <td className="cell-created" data-label="Akun dibuat">
+                <td className="cell-created" data-label="Terdaftar">
                   {formatDate(u.created_at)}
                 </td>
                 <td className="cell-del" data-label="Aksi">
@@ -179,13 +226,15 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={5} className="empty">
+                <td colSpan={4} className="empty">
                   Belum ada akun. Buat akun pertama lewat form di atas.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+      </div>
       </div>
 
       {confirming && (
@@ -220,7 +269,12 @@ function Users({ currentUserId, onDeleted }: { currentUserId: number; onDeleted:
               >
                 Batal
               </button>
-              <button type="button" className="btn-danger" onClick={handleDelete} disabled={deleting}>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
                 {deleting ? "Menghapus…" : "Hapus akun"}
               </button>
             </div>
