@@ -172,7 +172,3 @@ Env backend di Render: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN=https://lapora
 - Login gagal membalas pesan yang sama untuk email tidak dikenal dan password salah.
 - Endpoint hanya menerima `approved`/`rejected` sebagai status; kolom `status` juga dibatasi `CHECK` di database.
 - Validasi ada di sisi server (nama wajib, maksimal 255 karakter, password minimal 6 karakter) — bukan hanya di UI.
-
-## Deploy
-
-Belum di-deploy — jalankan secara lokal sesuai langkah di atas.
