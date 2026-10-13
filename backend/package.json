@@ -8,7 +8,8 @@
     "start": "NODE_ENV=production node dist/server.js",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
-    "db:rows": "tsx scripts/rows.ts"
+    "db:rows": "tsx scripts/rows.ts",
+    "db:reseed-reports": "tsx scripts/reseed-reports.ts"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
