@@ -39,6 +39,11 @@ app.get("/", (_req, res) => {
   });
 });
 
+// Health check — dipakai platform (Koyeb/Render) untuk memastikan aplikasi hidup.
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true });
+});
+
 app.use((_req, res) => {
   res.status(404).json({ error: "endpoint tidak ditemukan" });
 });
