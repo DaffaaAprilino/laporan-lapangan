@@ -27,7 +27,9 @@ router.post(
     }
     res.cookie(COOKIE_NAME, signToken(user.id), {
       httpOnly: true,
-      sameSite: "lax",
+      // Production lintas domain (Vercel → Render) butuh SameSite=None + Secure
+      // agar cookie sesi ikut pada fetch credentials: "include". Localhost tetap Lax.
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: SESSION_MS,
     });
